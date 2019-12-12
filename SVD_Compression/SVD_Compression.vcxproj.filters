@@ -28,6 +28,7 @@
     <None Include="opencv_imgcodecs341d.dll" />
     <None Include="opencv_imgproc341d.dll" />
     <None Include="opencv_photo341d.dll" />
+    <None Include="opencv_videoio341d.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compression.h">
