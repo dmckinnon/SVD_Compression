@@ -3,7 +3,7 @@ I've recently been looking into Singular Value Decomposition (SVD), what it is, 
 
 
 ### Theory and walkthrough
-For the theory behind SVD, and a walkthrough of my code, see the wiki. 
+For the [theory behind SVD](https://github.com/dmckinnon/SVD_Compression/wiki/SVD-Theory), and a [walkthrough of my code](https://github.com/dmckinnon/SVD_Compression/wiki/Image-compression), see the [wiki](https://github.com/dmckinnon/SVD_Compression/wiki). 
 
 ### How to build and run
 I've included the Visual Studio project along with my code, and the OpenCV dlls. I use these, and the Eigen library. When you have the appropriate libs linked, and headers in the rights paths, then this should just build in visual studio. Outside of that, linking and including is on you. 
