@@ -35,25 +35,23 @@ using namespace std;
 	this in future to include an implementation of SVD. I'm hesitant, since such
 	an algorithm is nontrivial, and prone to error and finickiness. 
 
-	The 'amount of compression' currently corresponds to an amount of the 
+	The 'amount of compression' currently corresponds to a number of the 
 	singular values and vectors used, but at some point I need to convert this 
 	to 'amount of image that is error vs true' and give a number from 1 - 100
 
-	TODO:
-	- command line arg for compression amount
-	- convert compression amount to percentage error or something
-	- test image error
-	- compile with O3 for speed
-	- store in an actual compressed format lol
-
+    ----------------------------------------------------------------------------
 	The problem currently is we generate a whole lotta floats, not unsigned chars.
 	And then these are stored as text, not as raw binary, which means they take up
 	way more memory than they should. 
 	If we store everything as 16 bit floats, and then save as raw binary, it is
 	considerably more compressed and we end up saving memory
 
-	Otherwise this is an exercise in futility, and learning SVD. 
-	Which would be fun. Still gotta write an SVD algo
+	idea:  multiply everything by 1000 and store as short ints
+	you lose some precision, but store 2*number of vals in bytes
+	which hopefully still saves space
+	just gotta learn to read and write raw binary
+
+	Stretch goal: write the SVD algorithm
 */
 
 int main(int argc, char** argv)
@@ -62,7 +60,7 @@ int main(int argc, char** argv)
 	string imageFilename = "img.jpg";
 	string compressFilename = "compress.svd";
 	bool compressInput = true;
-	int compressionAmount = 25;// DEFAULT_COMPRESSION_AMOUNT;
+	int compressionAmount = DEFAULT_COMPRESSION_AMOUNT;
 	// Default compression
 
 	// Parse args
@@ -74,6 +72,7 @@ int main(int argc, char** argv)
 		cout << "-image <filename>      The image file to be compressed. Default is img.jpg. Optional." << endl;
 		cout << "-compressed <filename> The compressed file to be decompressed. Default is compress.svd. Optional." << endl;
 		cout << "-decompress            Flag stating to decompress. If not set, default is to compress. Optional." << endl;
+		cout << "-num-vals              Number of values to use in compression. Default is 50. More means higher quality. Optional." << endl;
 		exit(1);
 	}
 	else
@@ -98,6 +97,11 @@ int main(int argc, char** argv)
 			else if (strcmp(argv[i], "-decompress") == 0)
 			{
 				compressInput = false;
+			}
+			else if (strcmp(argv[i], "-num-vals ") == 0)
+			{
+				i++;
+				compressionAmount = stoi(argv[i]);
 			}
 		}
 	}

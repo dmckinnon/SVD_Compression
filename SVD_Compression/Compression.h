@@ -9,11 +9,11 @@
 
 struct CompressedImage
 {
-	unsigned char vRows, vCols, uRows, uCols, numVals;
+	short vRows, vCols, uRows, uCols, numVals;
 	Eigen::MatrixXf V;
 	Eigen::MatrixXf U;
 	Eigen::VectorXf singularValues;
-	int compressionAmount;
+	short compressionAmount;
 
 	// IO operators
 	friend std::ostream& operator << (std::ostream& os, const CompressedImage& c)
@@ -25,10 +25,28 @@ struct CompressedImage
 		os << c.singularValues;
 		return os;
 	}
-	friend std::istream& operator >> (std::istream& is, CompressedImage& c)
+	friend std::istream& operator >> (std::istream& is, CompressedImage& C)
 	{
-		// need to input carefully
-		// value by value
+		is >> C.vRows >> C.vCols >> C.uRows >> C.uCols >> C.numVals;
+		// Now read the next values in one at a time
+		for (int r = 0; r < C.vRows; ++r)
+		{
+			for (int c = 0; c < C.vCols; ++c)
+			{
+				is >> C.V(r, c);
+			}
+		}
+		for (int r = 0; r < C.uRows; ++r)
+		{
+			for (int c = 0; c < C.uCols; ++c)
+			{
+				is >> C.U(r, c);
+			}
+		}
+		for (int v = 0; v < C.numVals; ++v)
+		{
+			is >> C.singularValues(v, 0);
+		}
 		return is;
 	}
 };

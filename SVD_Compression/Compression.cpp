@@ -12,7 +12,7 @@ using namespace std;
 using namespace cv;
 using namespace Eigen;
 
-//#define DEBUG_SHOW_COMPRESSION
+#define DEBUG_SHOW_COMPRESSION
 
 /*
 	Given a CompressedImage structure, create the image
@@ -23,6 +23,7 @@ void CreateImageFromCompression(
 {
 	MatrixXf sigma = c.singularValues.asDiagonal();
 	MatrixXf compressedMatrix = c.U * sigma * c.V.transpose();
+	img = Mat(compressedMatrix.rows(), compressedMatrix.cols(), 0);
 
 	for (int r = 0; r < img.rows; ++r)
 	{
@@ -34,17 +35,38 @@ void CreateImageFromCompression(
 }
 
 /*
+	Given a filename, open the compressed image
+*/
+CompressedImage OpenCompressionFile(_In_ const string& file)
+{
+	ifstream compressedFile;
+	compressedFile.open(file);
+	CompressedImage c;
+	if (compressedFile.is_open())
+	{
+		compressedFile >> c;
+		compressedFile.close();
+	}
+	return c;
+}
+
+/*
 	Take a CompressedImage structure and write it to a file
 	Filename is compress.svd
 */
 void WriteCompressedFile(
 	_In_ const string& workingDir,
-	_In_ const CompressedImage& c)
+	_In_ CompressedImage& c)
 {
 	ofstream compressedFile;
 	compressedFile.open(workingDir + "compress.svd");
 	if (compressedFile.is_open())
 	{
+		c.uCols = c.U.cols();
+		c.uRows = c.U.rows();
+		c.vCols = c.V.cols();
+		c.vRows = c.U.rows();
+		c.numVals = c.singularValues.rows();
 		compressedFile << c;
 		compressedFile.close();
 	}
@@ -78,13 +100,8 @@ bool CompressImage(
 		}
 	}
 
-	// TODO:
-	// make sure that rows is greater than columns
-	// transpose if necessary
-	// This is not strictly necessary
-
 	// Now compute the singular values
-	// TODO: write this algorithm
+	// TODO: write this algorithm myself
 	BDCSVD<MatrixXf> svd(imgMatrix, ComputeFullU | ComputeFullV);
 	if (!svd.computeV())
 		return false;
@@ -113,9 +130,9 @@ bool CompressImage(
 	Mat imgCompressed(img.size(), CV_8U);
 	CreateImageFromCompression(c, imgCompressed);
 
-	// debug
-	cout << "Values in image: " << img.rows * img.cols << std::endl;
-	cout << "Values from SVD: " << c.U.rows() * c.U.cols() << " + " << c.singularValues.rows() << " + ";
+	// Compression stats
+	cout << "Number of bytes in the image: " << img.rows * img.cols << std::endl;
+	cout << "Number of values in the reduced SVD model: " << c.U.rows() * c.U.cols() << " + " << c.singularValues.rows() << " + ";
 	cout << c.V.rows() * c.V.cols();
 	cout << " = " << c.U.rows() * c.U.cols() + c.singularValues.rows() + c.V.rows() * c.V.cols() << endl;
 
@@ -128,6 +145,16 @@ bool CompressImage(
 	imwrite(workingDir + "compressed.bmp", imgCompressed);
 	WriteCompressedFile(workingDir, c);
 
+	// Compute image error and print out statistics:
+	Mat errorImage;
+	absdiff(img, imgCompressed, errorImage);
+	Scalar error = sum(errorImage);
+#ifdef DEBUG_SHOW_COMPRESSION
+	cout << "Total compression error in terms of pixel difference is " << error[0] << endl;
+	imshow("Error image", errorImage);
+	waitKey(0);
+#endif
+
 	return true;
 }
 
@@ -139,8 +166,18 @@ bool DecompressToImage(
 	_In_ const std::string& compressFilename)
 {
 	// Open the compression file
+	CompressedImage c = OpenCompressionFile(workingDir + compressFilename);
 
+	// Compute the SVD
+	Mat imgCompressed;
+	CreateImageFromCompression(c, imgCompressed);
 
+#ifdef DEBUG_SHOW_COMPRESSION
+	imshow("Compressed Image", imgCompressed);
+	waitKey(0);
+#endif
+
+	imwrite(workingDir + "compressed.bmp", imgCompressed);
 
 	return true;
 }
