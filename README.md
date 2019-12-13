@@ -6,6 +6,6 @@ I've been looking into Singular Value Decomposition (SVD), what it is, why it wo
 For the [theory behind SVD](https://github.com/dmckinnon/SVD_Compression/wiki/SVD-Theory), and a [walkthrough of my code](https://github.com/dmckinnon/SVD_Compression/wiki/Image-compression), see the [wiki](https://github.com/dmckinnon/SVD_Compression/wiki). 
 
 ### How to build and run
-I've included the Visual Studio project along with my code, and the OpenCV dlls. I use these, and the Eigen library. When you have the appropriate libs linked, and headers in the rights paths, then this should just build in visual studio. Outside of that, linking and including is on you. 
+I've included the Visual Studio project along with my code, and the OpenCV dlls. I use these, and the Eigen library. When you have the appropriate libs linked, and headers in the rights paths, then this should just build in visual studio. Outside of that, linking and including is on you. I advice compiling with -O3, since SVD is an intensive algorithm on something as large as an image.
 
 The instructions for how to run the exe are in main - try running it with -h first. 
