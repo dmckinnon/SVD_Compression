@@ -1,5 +1,5 @@
 # SVD_Compression
-I've been looking into Singular Value Decomposition (SVD), what it is, why it works, how it works, and finally, why it's useful. This tutorial goes over some of the former - I'm not a good mathematics lecturer, so my explanation won't be great bu I'll try to give helpful links - and the code gives an example of the latter. Specifically, this is how SVD can be used to compress an image from a raw format, like bitmap, to something using far fewer values, whether lossy or not. I'll also explain why this is not a commonly used image compression algorithm, and why ones like JPG are far superior.
+I've been looking into Singular Value Decomposition (SVD), what it is, why it works, how it works, and finally, why it's useful. This tutorial goes over some of the former - I'm not a good mathematics lecturer, so my explanation won't be great but I'll try to give helpful links - and the code gives an example of the latter. Specifically, this is how SVD can be used to compress an image from a raw format, like bitmap, to something using far fewer values, whether lossy or not. I'll also explain why this is not a commonly used image compression algorithm, and why ones like JPG are far superior.
 
 
 ### Theory and walkthrough
